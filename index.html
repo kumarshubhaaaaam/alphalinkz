@@ -279,12 +279,17 @@
   }
 
   function handleWatchClick(encodedUrl, encodedTitle) {
-    const verified = getCookie('verified_access');
-    if (verified === 'true') {
-      window.open(`stream.html?url=${encodedUrl}&title=${encodedTitle}`, '_blank');
-    } else {
-      window.location.href = `verify.html?url=${encodedUrl}&title=${encodedTitle}`;
-    }
+    function isVerified() {
+  const verifiedCookie = document.cookie.includes("verified_access=true");
+  const verifiedUntil = parseInt(localStorage.getItem("verifiedUntil") || "0", 10);
+  return verifiedCookie && verifiedUntil > Date.now();
+}
+
+if (isVerified()) {
+  window.open(`stream.html?url=${encodedUrl}&title=${encodedTitle}`, '_blank');
+} else {
+  window.location.href = `verify.html?url=${encodedUrl}&title=${encodedTitle}`;
+}
   }
 
   function renderPagination() {
